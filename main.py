@@ -16,12 +16,14 @@ def setup_game():
 def main():
     screen, clock = setup_game()
 
-    # Balls setup
-    balls = [
-        Ball(200, 200, WHITE),  # Cue ball
-        Ball(500, 180, RED),     # First colored ball
-        Ball(540, 220, BLUE),    # Second colored ball
+    # Balls setup with easy pocket positions
+    INITIAL_POSITIONS = [
+        (200, 200, WHITE),  # Cue ball
+        (50, 50, RED),     # First colored ball near top-left pocket
+        (750, 50, BLUE),    # Second colored ball near top-right pocket
     ]
+    
+    balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
     cue_ball = balls[0]
 
     dragging = False
@@ -41,14 +43,10 @@ def main():
                 if game_over:
                     restart_rect = draw_restart_button(screen, font)
                     if restart_rect.collidepoint(event.pos):
-                        balls = [
-                            Ball(200, 200, WHITE),
-                            Ball(500, 180, RED),
-                            Ball(540, 220, BLUE),
-                        ]
+                        balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
                         cue_ball = balls[0]
                         game_over = False
-                elif not any(b.is_moving() for b in balls):
+                elif not any(b.is_moving() for b in balls if not b.pocketed) and not cue_ball.pocketed:  # Only check non-pocketed balls
                     dragging = True
             elif event.type == pygame.MOUSEBUTTONUP:
                 if dragging:
@@ -65,8 +63,12 @@ def main():
             if is_in_pocket(ball):
                 ball.pocketed = True
 
-        if not game_over and all(b.pocketed for b in balls[1:]):
-            game_over = True
+        # Check game over conditions
+        if not game_over and (cue_ball.pocketed or all(ball.pocketed for ball in balls[1:])):
+            # Auto-restart after a short delay
+            pygame.time.delay(1000)  # 1 second delay
+            balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
+            cue_ball = balls[0]
 
         # Draw game elements
         for px, py in POCKETS:
