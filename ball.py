@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-from constants import BALL_RADIUS, WIDTH, HEIGHT
+from constants import BALL_RADIUS, WIDTH, HEIGHT, FRICTION
 
 class Ball:
     def __init__(self, x, y, color):
@@ -13,7 +13,7 @@ class Ball:
         if not self.pocketed:
             # Move the ball based on its velocity
             self.pos += self.vel
-            self.vel *= 0.99  # Friction
+            self.vel *= FRICTION  # Friction
 
             # Wall collisions (left, right, top, bottom)
             if self.pos[1] - BALL_RADIUS <= 0:  # Top wall

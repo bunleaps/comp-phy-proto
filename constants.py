@@ -4,6 +4,7 @@ INFO_HEIGHT = 50
 FPS = 60
 BALL_RADIUS = 15
 POCKET_RADIUS = 30
+FRICTION = 0.99
 
 # Define pockets at global scope
 POCKETS = [(0, 0), (WIDTH, 0), (0, HEIGHT), (WIDTH, HEIGHT)]
