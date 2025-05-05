@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-from constants import WIDTH, HEIGHT, BLACK, GRAY
+from constants import WIDTH, HEIGHT, BLACK, GRAY, MAXIMUM_FORCE
 
 def draw_cue(screen, cue_ball, mouse_pos, dragging): 
     if not dragging or cue_ball.is_moving(): 
@@ -8,7 +8,7 @@ def draw_cue(screen, cue_ball, mouse_pos, dragging):
     # Calculate direction vector from mouse to ball: d = p_ball - p_mouse
     direction = cue_ball.pos - mouse_pos 
     # Limit cue length between 0 and 120 pixels: min(|d|, 120)
-    length = np.clip(np.linalg.norm(direction), 0, 120) 
+    length = np.clip(np.linalg.norm(direction), 0, MAXIMUM_FORCE) 
     if length < 10: 
         return 
     # Calculate unit vector for direction: d/|d|
