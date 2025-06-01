@@ -1,7 +1,8 @@
 import numpy as np
+import pygame
 from constants import BALL_RADIUS, POCKET_RADIUS, POCKETS
 
-def resolve_collision(b1, b2): 
+def resolve_collision(b1, b2, col_sound): 
     if b1.pocketed or b2.pocketed: 
         return 
     # Calculate vector between ball centers: Δp = p₁ - p₂
@@ -20,6 +21,11 @@ def resolve_collision(b1, b2):
 
     if vel_along_normal > 0:  # Balls are already separating
         return 
+    
+    if col_sound is not None:
+        volume = min(1.0, abs(vel_along_normal) / 20)  # volume scaled by collision speed
+        col_sound.set_volume(volume)
+        col_sound.play()
 
     # Get masses
     m1 = b1.mass

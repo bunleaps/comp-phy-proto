@@ -10,6 +10,7 @@ from graph import Graph
 
 def setup_game():
     pygame.init()
+    pygame.mixer.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT + INFO_HEIGHT))
     pygame.display.set_caption("Pool Simulation")
     clock = pygame.time.Clock()
@@ -28,6 +29,9 @@ def main():
     elapsed_time = 0.0
 
     visualize = True
+
+    # Sound setup
+    col_sound = pygame.mixer.Sound("assets/audio/col-1.wav")
 
     # Balls setup with (x, y, color, mass)
     INITIAL_POSITIONS = [
@@ -106,9 +110,9 @@ def main():
 
         # Ball movement and collision
         for i, ball in enumerate(balls):
-            ball.move()
+            ball.move(col_sound)
             for other_ball in balls[i+1:]:
-                resolve_collision(ball, other_ball)
+                resolve_collision(ball, other_ball, col_sound)
             if is_in_pocket(ball):
                 ball.pocketed = True
 
