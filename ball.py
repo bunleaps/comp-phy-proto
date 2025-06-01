@@ -1,5 +1,6 @@
 import pygame
 import numpy as np
+from constants import BALL_RADIUS, WIDTH, HEIGHT, FRICTION, WALL_RESTITUTION
 import math
 from constants import BALL_RADIUS, WIDTH, HEIGHT, FRICTION
 
@@ -26,25 +27,25 @@ class Ball:
             # Wall collisions (left, right, top, bottom)
             if self.pos[1] - BALL_RADIUS <= 0:  # Top wall
                 self.pos[1] = BALL_RADIUS
-                self.vel[1] *= -1
+                self.vel[1] *= -WALL_RESTITUTION
                 col_sound.set_volume(volume)
                 col_sound.play()
 
             elif self.pos[1] + BALL_RADIUS >= HEIGHT:  # Bottom wall
                 self.pos[1] = HEIGHT - BALL_RADIUS
-                self.vel[1] *= -1
+                self.vel[1] *= -WALL_RESTITUTION
                 col_sound.set_volume(volume)
                 col_sound.play()
 
             if self.pos[0] - BALL_RADIUS <= 0:  # Left wall
                 self.pos[0] = BALL_RADIUS
-                self.vel[0] *= -1
+                self.vel[0] *= -WALL_RESTITUTION
                 col_sound.set_volume(volume)
                 col_sound.play()
                 
             elif self.pos[0] + BALL_RADIUS >= WIDTH:  # Right wall
                 self.pos[0] = WIDTH - BALL_RADIUS
-                self.vel[0] *= -1
+                self.vel[0] *= -WALL_RESTITUTION
                 col_sound.set_volume(volume)
                 col_sound.play()
 
