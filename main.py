@@ -5,6 +5,7 @@ from constants import *
 from ball import Ball
 from physics import resolve_collision, is_in_pocket
 from ui import draw_cue, draw_restart_button
+from visualizer import Visualizer
 
 def setup_game():
     pygame.init()
@@ -15,6 +16,7 @@ def setup_game():
 
 def main():
     screen, clock = setup_game()
+    visualize = True
 
     # Balls setup with easy pocket positions
     INITIAL_POSITIONS = [
@@ -84,6 +86,10 @@ def main():
             draw_restart_button(screen, font)
 
         # Draw diagnostics
+        if visualize:
+            for ball in balls:
+                Visualizer.draw_ball_data(screen, ball, font, WHITE)
+
         pygame.draw.rect(screen, BLACK, (0, HEIGHT, WIDTH, INFO_HEIGHT))
         info = f"Cue Pos: {cue_ball.pos.astype(int)} Vel: {np.round(cue_ball.vel, 2)}"
         screen.blit(font.render(info, True, WHITE), (10, HEIGHT + 15))

@@ -22,3 +22,7 @@ ORANGE = (255, 165, 0)
 BROWN = (139, 69, 19)
 PINK = (255, 192, 203)
 GRAY = (128, 128, 128)
+
+# Visualizations
+INFO_FONT_SCALE = 1
+VECTOR_SCALE = 1
