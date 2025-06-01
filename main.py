@@ -5,7 +5,8 @@ from constants import *
 from ball import Ball
 from physics import resolve_collision, is_in_pocket
 from ui import draw_cue, draw_restart_button, draw_hit_spot_selector
-from visualizer import Visualizer
+from utils import Visualizer
+from graph import Graph
 
 def setup_game():
     pygame.init()
@@ -14,8 +15,18 @@ def setup_game():
     clock = pygame.time.Clock()
     return screen, clock
 
+def setup_visualizations() -> Graph:
+    graph = Graph()
+    return graph
+
 def main():
     screen, clock = setup_game()
+    graph = setup_visualizations()
+    graph_interval = GRAPH_INTERVAL
+    last_graph = 0.0
+
+    elapsed_time = 0.0
+
     visualize = True
 
     # Balls setup with (x, y, color, mass)
@@ -129,8 +140,17 @@ def main():
         
         draw_hit_spot_selector(screen, font, selected_hit_spot) # Draw the selector UI
 
+        # Updates graph
+        if last_graph >= graph_interval:
+            print(cue_ball.speed)
+            graph.update(elapsed_time, cue_ball.speed)
+            last_graph -= graph_interval
+
+        dt = clock.tick(FPS) / 1000 #milliseconds
+        elapsed_time += dt
+        last_graph += dt
+
         pygame.display.flip()
-        clock.tick(FPS)
 
     pygame.quit()
     sys.exit()

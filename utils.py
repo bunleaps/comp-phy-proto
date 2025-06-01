@@ -7,7 +7,7 @@ from ball import Ball
 class Visualizer():
     
     @staticmethod
-    def draw_ball_data(screen, ball:Ball, font, font_color) -> None:
+    def draw_ball_data(screen:pygame.Surface, ball:Ball, font:pygame.font.Font, font_color:pygame.color.Color) -> None:
         if ball.pocketed:
             return
         

@@ -52,3 +52,4 @@ HIT_SPOT_EFFECTS = {
 # Visualizations
 INFO_FONT_SCALE = 1
 VECTOR_SCALE = 1
+GRAPH_INTERVAL = 0.25 # Graph refresh intervals - use higher values if the program is lagging
