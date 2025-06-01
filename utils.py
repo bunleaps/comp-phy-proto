@@ -7,7 +7,13 @@ from ball import Ball
 class Visualizer():
     
     @staticmethod
-    def draw_ball_data(screen:pygame.Surface, ball:Ball, font:pygame.font.Font, font_color:pygame.color.Color) -> None:
+    def draw_ball_data(
+        screen:pygame.Surface,
+        ball:Ball, 
+        font:pygame.font.Font, 
+        font_color:pygame.color.Color
+    ) -> None:
+        
         if ball.pocketed:
             return
         
@@ -37,3 +43,56 @@ class Visualizer():
             screen.blit(label, (x + 15, y + i * 15 - 20))
 
         return 
+    
+    @staticmethod
+    def draw_velocity_vector(
+        screen: pygame.Surface,
+        ball: Ball,
+        color: pygame.Color = (0,255,0),
+        scale: float = 20,
+        arrow_size: int = 5,
+    ) -> None:
+        if ball.pocketed:
+            return
+        
+        x, y = ball.pos
+        vx, vy = ball.vel
+        speed = math.hypot(vx, vy)
+
+        if speed < 0.01:
+            return
+        
+        end_x = x + vx * scale
+        end_y = y + vy * scale
+
+        # Velocity line
+        pygame.draw.line(
+            screen,
+            color,
+            (int(x), int(y)),
+            (int(end_x), int(end_y)),
+            2
+        )
+
+        angle = math.atan2(vy, vx)
+        left = (
+            end_x - arrow_size * math.cos(angle - math.pi / 6),
+            end_y - arrow_size * math.sin(angle - math.pi / 6)
+        )
+        right = (
+            end_x - arrow_size * math.cos(angle + math.pi / 6),
+            end_y - arrow_size * math.sin(angle + math.pi / 6)
+        )
+
+        # Arrowhead
+        pygame.draw.polygon(
+            screen,
+            color,
+            [
+                (int(end_x), int(end_y)),
+                (int(left[0]), int(left[1])),
+                (int(right[0]), int(right[1]))
+            ]
+        )
+
+        ...

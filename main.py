@@ -16,7 +16,7 @@ def setup_game():
     return screen, clock
 
 def setup_visualizations() -> Graph:
-    graph = Graph()
+    graph = Graph(3)
     return graph
 
 def main():
@@ -53,6 +53,11 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_i:
+                    visualize = not visualize
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if game_over:
                     restart_rect = draw_restart_button(screen, font)
@@ -132,6 +137,7 @@ def main():
         if visualize:
             for ball in balls:
                 Visualizer.draw_ball_data(screen, ball, font, WHITE)
+                Visualizer.draw_velocity_vector(screen, ball, YELLOW, 15, 4)
 
         pygame.draw.rect(screen, BLACK, (0, HEIGHT, WIDTH, INFO_HEIGHT))
         info_text_pos_y = HEIGHT + 10
@@ -142,8 +148,7 @@ def main():
 
         # Updates graph
         if last_graph >= graph_interval:
-            print(cue_ball.speed)
-            graph.update(elapsed_time, cue_ball.speed)
+            graph.update(elapsed_time, balls)
             last_graph -= graph_interval
 
         dt = clock.tick(FPS) / 1000 #milliseconds

@@ -17,8 +17,7 @@ class Ball:
             # Move the ball based on its velocity
             self.pos += self.vel
             self.vel *= FRICTION  # Friction
-            x,y = self.vel
-            self.speed = math.hypot(x,y)
+            self.speed = math.hypot(self.vel[0],self.vel[1])
 
             # Wall collisions (left, right, top, bottom)
             if self.pos[1] - BALL_RADIUS <= 0:  # Top wall
