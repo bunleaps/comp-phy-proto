@@ -1,16 +1,16 @@
 import pygame
 import numpy as np
-from constants import BALL_RADIUS, WIDTH, HEIGHT, FRICTION, WALL_RESTITUTION
+from constants import BALL_RADIUS, WIDTH, HEIGHT, MASS, FRICTION, WALL_RESTITUTION
 import math
-from constants import BALL_RADIUS, WIDTH, HEIGHT, FRICTION
 
 class Ball:
-    def __init__(self, x, y, color, mass):
+    def __init__(self, x, y, color, material):
         self.pos = np.array([x, y], dtype=float)
         self.vel = np.array([0, 0], dtype=float)
         self.speed = 0
         self.color = color
-        self.mass = float(mass) # Ensure mass is a float
+        self.mass = MASS # Ensure mass is a float
+        self.material = material
         self.pocketed = False
 
     def move(self, col_sound):
@@ -48,6 +48,9 @@ class Ball:
                 self.vel[0] *= -WALL_RESTITUTION
                 col_sound.set_volume(volume)
                 col_sound.play()
+        else:
+            self.vel *= 0
+            self.speed = 0
 
     def is_moving(self):
         return np.linalg.norm(self.vel) > 0.01

@@ -3,7 +3,7 @@ import numpy as np
 import sys
 from constants import *
 from ball import Ball
-from physics import resolve_collision, is_in_pocket
+from physics import resolve_collision, resolve_inelastic_collision, is_in_pocket
 from ui import draw_cue, draw_restart_button, draw_hit_spot_selector
 from utils import Visualizer
 from graph import Graph
@@ -28,19 +28,20 @@ def main():
 
     elapsed_time = 0.0
 
-    visualize = True
+    visualize = False
 
     # Sound setup
     col_sound = pygame.mixer.Sound("assets/audio/col-1.wav")
 
-    # Balls setup with (x, y, color, mass)
-    INITIAL_POSITIONS = [
-        (200, 200, WHITE, 1.0),  # Cue ball
-        (50, 50, RED, 1.0),     # First colored ball near top-left pocket
-        (750, 50, BLUE, 1.0),    # Second colored ball near top-right pocket
+    # Balls setup with (x, y, color, material)
+    mat = 'resin'
+    INITIAL_SETUP = [
+        (210, 200, WHITE, 'resin'),  # Cue ball
+        (200, 100, RED, 'resin'),     # First colored ball near top-left pocket
+        (220, 100, BLUE, 'resin'),    # Second colored ball near top-right pocket
     ]
 
-    balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
+    balls = [Ball(*pos) for pos in INITIAL_SETUP]
     cue_ball = balls[0]
 
     dragging = False
@@ -66,7 +67,7 @@ def main():
                 if game_over:
                     restart_rect = draw_restart_button(screen, font)
                     if restart_rect.collidepoint(event.pos):
-                        balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
+                        balls = [Ball(*pos) for pos in INITIAL_SETUP]
                         cue_ball = balls[0]
                         game_over = False
                         selected_hit_spot = "CENTER" # Reset hit spot
@@ -112,7 +113,7 @@ def main():
         for i, ball in enumerate(balls):
             ball.move(col_sound)
             for other_ball in balls[i+1:]:
-                resolve_collision(ball, other_ball, col_sound)
+                resolve_inelastic_collision(ball, other_ball, col_sound)
             if is_in_pocket(ball):
                 ball.pocketed = True
 
@@ -120,7 +121,7 @@ def main():
         if not game_over and (cue_ball.pocketed or all(ball.pocketed for ball in balls[1:])):
             # Auto-restart after a short delay
             pygame.time.delay(1000)  # 1 second delay
-            balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
+            balls = [Ball(*pos) for pos in INITIAL_SETUP]
             cue_ball = balls[0]
             selected_hit_spot = "CENTER" # Reset hit spot
 

@@ -14,6 +14,8 @@ class Graph:
         plt.ion()
         self.fig, self.ax = plt.subplots()
 
+        self.scrolling = True # set to false for testing
+
         self.num_balls = num_balls
         self.lines = []
         for i in range(num_balls):
@@ -25,7 +27,7 @@ class Graph:
         self.ax.legend(loc="upper right")
 
         # Fix y-axis to [0, 30]
-        self.ax.set_ylim(0, 30)
+        self.ax.set_ylim(0, 10)
 
         self.window_width = window_width
         max_points = int(estimated_fps * window_width * 2)
@@ -89,10 +91,14 @@ class Graph:
             line.set_data(self.frames, self.speeds[i])
 
         # 4) Scroll the x-axis window to [t - window_width, t], clamped at zero
-        if t <= self.window_width:
-            left, right = 0, self.window_width
+        if self.scrolling:
+            if t <= self.window_width:
+                left, right = 0, self.window_width
+            else:
+                left, right = t - self.window_width, t
         else:
-            left, right = t - self.window_width, t
+            left, right = 0, self.window_width
+
         self.ax.set_xlim(left, right)
 
         # 5) Redraw in interactive mode
