@@ -18,18 +18,26 @@ def resolve_collision(b1, b2):
     # Project relative velocity onto normal: Δv·n
     vel_along_normal = np.dot(rel_vel, normal)
 
-    if vel_along_normal > 0:  # Balls are separating
+    if vel_along_normal > 0:  # Balls are already separating
         return 
 
-    # Elastic collision impulse: J = -2m₁m₂Δv·n/(m₁+m₂)
-    # Since m₁ = m₂ = 1, simplified to: J = -2(Δv·n)/2
-    impulse = -2 * vel_along_normal / 2
-    
-    # Apply impulse: v₁' = v₁ + (J/m₁)n, v₂' = v₂ - (J/m₂)n
-    b1.vel += impulse * normal
-    b2.vel -= impulse * normal
-    
-    # Position correction to prevent overlap
+    # Get masses
+    m1 = b1.mass
+    m2 = b2.mass
+
+    # Prevent division by zero if total mass is zero (though masses should be positive)
+    total_mass = m1 + m2
+    if total_mass <= 0:
+        return
+
+    # Calculate new velocities after 1D elastic collision along the normal vector
+    # v1_new = v1 - (2 * m2 / (m1 + m2)) * vel_along_normal * normal
+    # v2_new = v2 + (2 * m1 / (m1 + m2)) * vel_along_normal * normal
+    # (where vel_along_normal = dot(v1 - v2, normal))
+    b1.vel -= (2 * m2 / total_mass) * vel_along_normal * normal
+    b2.vel += (2 * m1 / total_mass) * vel_along_normal * normal
+
+    # Position correction to prevent overlap (simple method, independent of mass for now)
     # x = (2R - |Δp|)/2 where R is ball radius
     overlap = 2 * BALL_RADIUS - dist
     # Move each ball by x/2 in opposite directions

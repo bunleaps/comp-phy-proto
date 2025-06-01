@@ -16,13 +16,13 @@ def setup_game():
 def main():
     screen, clock = setup_game()
 
-    # Balls setup with easy pocket positions
+    # Balls setup with (x, y, color, mass)
     INITIAL_POSITIONS = [
-        (200, 200, WHITE),  # Cue ball
-        (50, 50, RED),     # First colored ball near top-left pocket
-        (750, 50, BLUE),    # Second colored ball near top-right pocket
+        (200, 200, WHITE, 1.0),  # Cue ball
+        (50, 50, RED, 1.0),     # First colored ball near top-left pocket
+        (750, 50, BLUE, 1.0),    # Second colored ball near top-right pocket
     ]
-    
+
     balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
     cue_ball = balls[0]
 
@@ -51,8 +51,11 @@ def main():
             elif event.type == pygame.MOUSEBUTTONUP:
                 if dragging:
                     direction = cue_ball.pos - mouse_pos
-                    if np.linalg.norm(direction) > 5:
-                        cue_ball.vel += direction * 0.05
+                    dist = np.linalg.norm(direction)
+                    if dist > 5: # Minimum drag distance to apply force
+                        # Applied impulse = direction_vector * strength_coefficient
+                        # Change in velocity = impulse / mass
+                        cue_ball.vel += (direction * CUE_STRENGTH_COEFFICIENT) / cue_ball.mass
                 dragging = False
 
         # Ball movement and collision

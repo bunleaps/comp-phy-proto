@@ -3,10 +3,11 @@ import numpy as np
 from constants import BALL_RADIUS, WIDTH, HEIGHT, FRICTION
 
 class Ball:
-    def __init__(self, x, y, color):
+    def __init__(self, x, y, color, mass):
         self.pos = np.array([x, y], dtype=float)
         self.vel = np.array([0, 0], dtype=float)
         self.color = color
+        self.mass = float(mass) # Ensure mass is a float
         self.pocketed = False
 
     def move(self):

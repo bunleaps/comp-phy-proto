@@ -6,6 +6,7 @@ BALL_RADIUS = 15
 POCKET_RADIUS = 30
 FRICTION = 0.99
 MAXIMUM_FORCE = 120
+CUE_STRENGTH_COEFFICIENT = 0.05 # Factor for converting mouse drag to impulse
 
 # Define pockets at global scope
 POCKETS = [(0, 0), (WIDTH, 0), (0, HEIGHT), (WIDTH, HEIGHT)]
