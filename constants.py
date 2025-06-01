@@ -34,7 +34,7 @@ HIT_SPOT_BUTTON_RADIUS = 6
 HIT_SPOT_BUTTON_OFFSET = 13 # Distance from center of selector to center of button
 
 # Angle offset for side hits (in radians)
-SIDE_ANGLE_OFFSET = np.deg2rad(3.5)  # 3.5 degrees
+SIDE_ANGLE_OFFSET = np.deg2rad(7.0)  # Increased to 7.0 degrees
 
 HIT_SPOT_EFFECTS = {
     # (relative_x_offset, relative_y_offset, label, angle_offset_rad)
