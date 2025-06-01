@@ -7,6 +7,7 @@ FPS = 60
 BALL_RADIUS = 15
 POCKET_RADIUS = 30
 FRICTION = 0.99
+WALL_RESTITUTION = 0.85 # Coefficient of restitution for wall collisions (0 to 1)
 MAXIMUM_FORCE = 120
 CUE_STRENGTH_COEFFICIENT = 0.05 # Factor for converting mouse drag to impulse
 
@@ -34,7 +35,7 @@ HIT_SPOT_BUTTON_RADIUS = 6
 HIT_SPOT_BUTTON_OFFSET = 13 # Distance from center of selector to center of button
 
 # Angle offset for side hits (in radians)
-SIDE_ANGLE_OFFSET = np.deg2rad(7.0)  # Increased to 7.0 degrees
+SIDE_ANGLE_OFFSET = np.deg2rad(7)  # Increased to 7.0 degrees
 
 HIT_SPOT_EFFECTS = {
     # (relative_x_offset, relative_y_offset, label, angle_offset_rad)
