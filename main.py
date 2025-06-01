@@ -4,7 +4,7 @@ import sys
 from constants import *
 from ball import Ball
 from physics import resolve_collision, is_in_pocket
-from ui import draw_cue, draw_restart_button
+from ui import draw_cue, draw_restart_button, draw_hit_spot_selector
 from visualizer import Visualizer
 
 def setup_game():
@@ -18,19 +18,20 @@ def main():
     screen, clock = setup_game()
     visualize = True
 
-    # Balls setup with easy pocket positions
+    # Balls setup with (x, y, color, mass)
     INITIAL_POSITIONS = [
-        (200, 200, WHITE),  # Cue ball
-        (50, 50, RED),     # First colored ball near top-left pocket
-        (750, 50, BLUE),    # Second colored ball near top-right pocket
+        (200, 200, WHITE, 1.0),  # Cue ball
+        (50, 50, RED, 1.0),     # First colored ball near top-left pocket
+        (750, 50, BLUE, 1.0),    # Second colored ball near top-right pocket
     ]
-    
+
     balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
     cue_ball = balls[0]
 
     dragging = False
     font = pygame.font.SysFont("Arial", 16)
     game_over = False
+    selected_hit_spot = "CENTER"  # Default hit spot
 
     running = True
     while running:
@@ -48,13 +49,43 @@ def main():
                         balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
                         cue_ball = balls[0]
                         game_over = False
-                elif not any(b.is_moving() for b in balls if not b.pocketed) and not cue_ball.pocketed:  # Only check non-pocketed balls
-                    dragging = True
+                        selected_hit_spot = "CENTER" # Reset hit spot
+                else: # Not game over, check for other interactions
+                    temp_clickable_spots = draw_hit_spot_selector(pygame.Surface((0,0)), font, selected_hit_spot) # Dummy surface
+                    
+                    clicked_on_spot_selector = False
+                    for spot_key, rect in temp_clickable_spots.items():
+                        if rect.collidepoint(event.pos):
+                            selected_hit_spot = spot_key
+                            clicked_on_spot_selector = True
+                            break
+                    
+                    if not clicked_on_spot_selector and not any(b.is_moving() for b in balls if not b.pocketed) and not cue_ball.pocketed:
+                        dragging = True # Start dragging for a shot
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 if dragging:
                     direction = cue_ball.pos - mouse_pos
-                    if np.linalg.norm(direction) > 5:
-                        cue_ball.vel += direction * 0.05
+                    dist = np.linalg.norm(direction)
+                    if dist > 5:  # Minimum drag distance to apply force
+                        angle_offset = HIT_SPOT_EFFECTS[selected_hit_spot][3]
+                        
+                        if dist == 0: # Avoid division by zero if somehow dist is zero
+                            unit_direction = np.array([0.0,0.0])
+                        else:
+                            unit_direction = direction / dist
+                        
+                        # Rotate the unit_direction vector
+                        initial_angle = np.arctan2(unit_direction[1], unit_direction[0])
+                        modified_angle = initial_angle + angle_offset
+                        
+                        modified_unit_direction = np.array([np.cos(modified_angle), np.sin(modified_angle)])
+                        
+                        # Impulse magnitude is proportional to drag distance
+                        impulse_magnitude = dist * CUE_STRENGTH_COEFFICIENT
+                        applied_impulse = modified_unit_direction * impulse_magnitude
+                        
+                        cue_ball.vel += applied_impulse / cue_ball.mass
                 dragging = False
 
         # Ball movement and collision
@@ -71,6 +102,7 @@ def main():
             pygame.time.delay(1000)  # 1 second delay
             balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
             cue_ball = balls[0]
+            selected_hit_spot = "CENTER" # Reset hit spot
 
         # Draw game elements
         for px, py in POCKETS:
@@ -91,8 +123,11 @@ def main():
                 Visualizer.draw_ball_data(screen, ball, font, WHITE)
 
         pygame.draw.rect(screen, BLACK, (0, HEIGHT, WIDTH, INFO_HEIGHT))
-        info = f"Cue Pos: {cue_ball.pos.astype(int)} Vel: {np.round(cue_ball.vel, 2)}"
-        screen.blit(font.render(info, True, WHITE), (10, HEIGHT + 15))
+        info_text_pos_y = HEIGHT + 10
+        info = f"Cue Pos: {cue_ball.pos.astype(int)} Vel: {np.round(cue_ball.vel, 2)} Spot: {HIT_SPOT_EFFECTS[selected_hit_spot][2]}"
+        screen.blit(font.render(info, True, WHITE), (10, info_text_pos_y))
+        
+        draw_hit_spot_selector(screen, font, selected_hit_spot) # Draw the selector UI
 
         pygame.display.flip()
         clock.tick(FPS)
