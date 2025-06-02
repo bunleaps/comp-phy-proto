@@ -6,7 +6,7 @@ from ball import Ball
 from physics import resolve_inelastic_collision, is_in_pocket
 from ui import draw_cue, draw_restart_button, draw_hit_spot_selector
 from utils import Visualizer
-from graph import Graph
+from graph import Graph, Graph2
 
 class PoolTester:
     def __init__(self, direction, strength, material=('elastic','elastic'),visualize=False):
@@ -141,6 +141,6 @@ class PoolTester:
 if __name__ == "__main__":
     direction = np.array([1.0, 0.0])
     strength = 1
-    material = ('ivory','ivory')
+    material = ('inelastic','inelastic')
     tester = PoolTester(direction, strength, material, visualize=True)
     tester.run()

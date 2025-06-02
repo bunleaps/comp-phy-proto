@@ -6,7 +6,7 @@ from ball import Ball
 from physics import resolve_collision, resolve_inelastic_collision, is_in_pocket
 from ui import draw_cue, draw_restart_button, draw_hit_spot_selector
 from utils import Visualizer
-from graph import Graph
+from graph import Graph, Graph2
 
 def setup_game():
     pygame.init()
@@ -17,7 +17,7 @@ def setup_game():
     return screen, clock
 
 def setup_visualizations() -> Graph:
-    graph = Graph(num_balls=5)
+    graph = Graph2(num_balls=5)
     return graph
 
 def main():
@@ -35,13 +35,15 @@ def main():
 
     # Balls setup with (x, y, color, material)
     mat = 'resin'
-    INITIAL_SETUP = [
-        (WIDTH/2, HEIGHT/2, WHITE, 'resin'),  # Cue ball
-        (75, 75, RED, 'resin'),     # First colored ball near top-left pocket
-        (WIDTH-75, 75, BLUE, 'resin'),    # Second colored ball near top-right pocket
-        (WIDTH/2, 120, YELLOW, 'resin'),
-        (WIDTH/2, HEIGHT-120, PURPLE, 'resin')
-    ]
+    # INITIAL_SETUP = [
+    #     (WIDTH/2, HEIGHT/2, WHITE, 'resin'),  # Cue ball
+    #     (75, 75, RED, 'resin'),     # First colored ball near top-left pocket
+    #     (WIDTH-75, 75, BLUE, 'resin'),    # Second colored ball near top-right pocket
+    #     (WIDTH/2, 120, YELLOW, 'resin'),
+    #     (WIDTH/2, HEIGHT-120, PURPLE, 'resin')
+    # ]
+
+    INITIAL_SETUP = SETUP_3
 
     balls = [Ball(*pos) for pos in INITIAL_SETUP]
     cue_ball = balls[0]

@@ -50,18 +50,44 @@ SIDE_ANGLE_OFFSET = np.deg2rad(7)  # Increased to 7.0 degrees
 
 HIT_SPOT_EFFECTS = {
     # (relative_x_offset, relative_y_offset, label, angle_offset_rad)
-    "TOP_LEFT":     (-1, -1, "TL", -SIDE_ANGLE_OFFSET),
+    "TOP_LEFT":     (1, -1, "TL", -SIDE_ANGLE_OFFSET),
     "TOP_CENTER":   ( 0, -1, "T",  0),
-    "TOP_RIGHT":    ( 1, -1, "TR", SIDE_ANGLE_OFFSET),
-    "MIDDLE_LEFT":  (-1,  0, "L",  -SIDE_ANGLE_OFFSET),
+    "TOP_RIGHT":    ( -1, -1, "TR", SIDE_ANGLE_OFFSET),
+    "MIDDLE_LEFT":  (1,  0, "L",  -SIDE_ANGLE_OFFSET),
     "CENTER":       ( 0,  0, "C",  0),
-    "MIDDLE_RIGHT": ( 1,  0, "R",  SIDE_ANGLE_OFFSET),
-    "BOTTOM_LEFT":  (-1,  1, "BL", -SIDE_ANGLE_OFFSET),
+    "MIDDLE_RIGHT": (-1,  0, "R",  SIDE_ANGLE_OFFSET),
+    "BOTTOM_LEFT":  ( 1,  1, "BL", -SIDE_ANGLE_OFFSET),
     "BOTTOM_CENTER":( 0,  1, "B",  0),
-    "BOTTOM_RIGHT": ( 1,  1, "BR", SIDE_ANGLE_OFFSET),
+    "BOTTOM_RIGHT": (-1,  1, "BR", SIDE_ANGLE_OFFSET),
 }
 
 # Visualizations
 INFO_FONT_SCALE = 1
 VECTOR_SCALE = 1
-GRAPH_INTERVAL = 1/5 # Graph refresh intervals - use higher values if the program is lagging
+GRAPH_INTERVAL = 0.1 # Graph refresh intervals - use higher values if the program is lagging
+
+#SETUPS
+SETUP_1 = [
+    (WIDTH/2, HEIGHT/2, WHITE, 'resin'),
+    (WIDTH-100, HEIGHT/2, RED, 'resin'),
+    (WIDTH-80, HEIGHT/2 + 10, BLUE, 'resin'),
+    (WIDTH-80, HEIGHT/2 - 10, YELLOW, 'resin'),
+     ]
+SETUP_2 = [
+    (WIDTH/2, HEIGHT/2, WHITE, 'resin'),
+    (WIDTH-100, HEIGHT/2, RED, 'resin'),
+    (WIDTH-80, HEIGHT/2 + 10, BLUE, 'resin'),
+    (WIDTH-80, HEIGHT/2 - 10, YELLOW, 'resin'),
+    (WIDTH-60, HEIGHT/2 + 20, PURPLE, 'resin'),
+    (WIDTH-60, HEIGHT/2 - 20, ORANGE, 'resin'),
+    (WIDTH-60, HEIGHT/2, BROWN, 'resin')
+    ]
+SETUP_3 = [
+    (100, HEIGHT/2, WHITE, 'resin'),
+    (WIDTH/2, HEIGHT/2, RED, 'resin'),
+    (WIDTH/2 + 30, HEIGHT/2, BLUE, 'resin'),
+    (WIDTH/2 + 60, HEIGHT/2, YELLOW, 'resin'),
+    (WIDTH/2 + 90, HEIGHT/2, PURPLE, 'resin'),
+    (WIDTH/2 + 120, HEIGHT/2, ORANGE, 'resin'),
+    
+]
