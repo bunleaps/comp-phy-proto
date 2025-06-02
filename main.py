@@ -17,7 +17,7 @@ def setup_game():
     return screen, clock
 
 def setup_visualizations() -> Graph:
-    graph = Graph(3)
+    graph = Graph(num_balls=5)
     return graph
 
 def main():
@@ -36,9 +36,11 @@ def main():
     # Balls setup with (x, y, color, material)
     mat = 'resin'
     INITIAL_SETUP = [
-        (210, 200, WHITE, 'resin'),  # Cue ball
-        (200, 100, RED, 'resin'),     # First colored ball near top-left pocket
-        (220, 100, BLUE, 'resin'),    # Second colored ball near top-right pocket
+        (WIDTH/2, HEIGHT/2, WHITE, 'resin'),  # Cue ball
+        (75, 75, RED, 'resin'),     # First colored ball near top-left pocket
+        (WIDTH-75, 75, BLUE, 'resin'),    # Second colored ball near top-right pocket
+        (WIDTH/2, 120, YELLOW, 'resin'),
+        (WIDTH/2, HEIGHT-120, PURPLE, 'resin')
     ]
 
     balls = [Ball(*pos) for pos in INITIAL_SETUP]
