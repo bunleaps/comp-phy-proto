@@ -2,6 +2,7 @@
 import numpy as np
 
 WIDTH, HEIGHT = 800, 400
+MASS = 0.17
 INFO_HEIGHT = 50
 FPS = 60
 BALL_RADIUS = 15
@@ -9,7 +10,17 @@ POCKET_RADIUS = 30
 FRICTION = 0.99
 WALL_RESTITUTION = 0.85 # Coefficient of restitution for wall collisions (0 to 1)
 MAXIMUM_FORCE = 120
-CUE_STRENGTH_COEFFICIENT = 0.05 # Factor for converting mouse drag to impulse
+CUE_STRENGTH_COEFFICIENT = 0.01 # Factor for converting mouse drag to impulse
+
+MATERIAL_COR = {
+    "inelastic":0,
+    "elastic":1,
+    "drywood":0.50,
+    "celluloid":0.90,
+    "ivory":0.88,
+    "resin":0.97,
+    "steel":0.98,
+}
 
 # Define pockets at global scope
 POCKETS = [(0, 0), (WIDTH, 0), (0, HEIGHT), (WIDTH, HEIGHT)]
@@ -49,3 +60,8 @@ HIT_SPOT_EFFECTS = {
     "BOTTOM_CENTER":( 0,  1, "B",  0),
     "BOTTOM_RIGHT": ( 1,  1, "BR", SIDE_ANGLE_OFFSET),
 }
+
+# Visualizations
+INFO_FONT_SCALE = 1
+VECTOR_SCALE = 1
+GRAPH_INTERVAL = 1/5 # Graph refresh intervals - use higher values if the program is lagging

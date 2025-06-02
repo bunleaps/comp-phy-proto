@@ -3,27 +3,47 @@ import numpy as np
 import sys
 from constants import *
 from ball import Ball
-from physics import resolve_collision, is_in_pocket
+from physics import resolve_collision, resolve_inelastic_collision, is_in_pocket
 from ui import draw_cue, draw_restart_button, draw_hit_spot_selector
+from utils import Visualizer
+from graph import Graph
 
 def setup_game():
     pygame.init()
+    pygame.mixer.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT + INFO_HEIGHT))
     pygame.display.set_caption("Pool Simulation")
     clock = pygame.time.Clock()
     return screen, clock
 
+def setup_visualizations() -> Graph:
+    graph = Graph(num_balls=5)
+    return graph
+
 def main():
     screen, clock = setup_game()
+    graph = setup_visualizations()
+    graph_interval = GRAPH_INTERVAL
+    last_graph = 0.0
 
-    # Balls setup with (x, y, color, mass)
-    INITIAL_POSITIONS = [
-        (200, 200, WHITE, 1.0),  # Cue ball
-        (50, 50, RED, 1.0),     # First colored ball near top-left pocket
-        (750, 50, BLUE, 1.0),    # Second colored ball near top-right pocket
+    elapsed_time = 0.0
+
+    visualize = False
+
+    # Sound setup
+    col_sound = pygame.mixer.Sound("assets/audio/col-1.wav")
+
+    # Balls setup with (x, y, color, material)
+    mat = 'resin'
+    INITIAL_SETUP = [
+        (WIDTH/2, HEIGHT/2, WHITE, 'resin'),  # Cue ball
+        (75, 75, RED, 'resin'),     # First colored ball near top-left pocket
+        (WIDTH-75, 75, BLUE, 'resin'),    # Second colored ball near top-right pocket
+        (WIDTH/2, 120, YELLOW, 'resin'),
+        (WIDTH/2, HEIGHT-120, PURPLE, 'resin')
     ]
 
-    balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
+    balls = [Ball(*pos) for pos in INITIAL_SETUP]
     cue_ball = balls[0]
 
     dragging = False
@@ -40,11 +60,16 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_i:
+                    visualize = not visualize
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if game_over:
                     restart_rect = draw_restart_button(screen, font)
                     if restart_rect.collidepoint(event.pos):
-                        balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
+                        balls = [Ball(*pos) for pos in INITIAL_SETUP]
                         cue_ball = balls[0]
                         game_over = False
                         selected_hit_spot = "CENTER" # Reset hit spot
@@ -88,9 +113,9 @@ def main():
 
         # Ball movement and collision
         for i, ball in enumerate(balls):
-            ball.move()
+            ball.move(col_sound)
             for other_ball in balls[i+1:]:
-                resolve_collision(ball, other_ball)
+                resolve_inelastic_collision(ball, other_ball, col_sound)
             if is_in_pocket(ball):
                 ball.pocketed = True
 
@@ -98,7 +123,7 @@ def main():
         if not game_over and (cue_ball.pocketed or all(ball.pocketed for ball in balls[1:])):
             # Auto-restart after a short delay
             pygame.time.delay(1000)  # 1 second delay
-            balls = [Ball(*pos) for pos in INITIAL_POSITIONS]
+            balls = [Ball(*pos) for pos in INITIAL_SETUP]
             cue_ball = balls[0]
             selected_hit_spot = "CENTER" # Reset hit spot
 
@@ -116,6 +141,11 @@ def main():
             draw_restart_button(screen, font)
 
         # Draw diagnostics
+        if visualize:
+            for ball in balls:
+                Visualizer.draw_ball_data(screen, ball, font, WHITE)
+                Visualizer.draw_velocity_vector(screen, ball, YELLOW, 15, 4)
+
         pygame.draw.rect(screen, BLACK, (0, HEIGHT, WIDTH, INFO_HEIGHT))
         info_text_pos_y = HEIGHT + 10
         info = f"Cue Pos: {cue_ball.pos.astype(int)} Vel: {np.round(cue_ball.vel, 2)} Spot: {HIT_SPOT_EFFECTS[selected_hit_spot][2]}"
@@ -123,8 +153,16 @@ def main():
         
         draw_hit_spot_selector(screen, font, selected_hit_spot) # Draw the selector UI
 
+        # Updates graph
+        if last_graph >= graph_interval:
+            graph.update(elapsed_time, balls)
+            last_graph -= graph_interval
+
+        dt = clock.tick(FPS) / 1000 #milliseconds
+        elapsed_time += dt
+        last_graph += dt
+
         pygame.display.flip()
-        clock.tick(FPS)
 
     pygame.quit()
     sys.exit()

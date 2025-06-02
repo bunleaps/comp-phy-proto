@@ -55,3 +55,7 @@ def draw_hit_spot_selector(screen, font, selected_spot_key):
         if spot_key == selected_spot_key: # Border for selected
              pygame.draw.circle(screen, BLACK, (spot_center_x, spot_center_y), HIT_SPOT_BUTTON_RADIUS, 1)
     return clickable_spots
+
+def draw_info_button(screen, font):
+    """Draws the button that toggles info on ball attributes, as well as vectors"""
+    ...
